@@ -9,19 +9,18 @@ A full-stack flight reservation and check-in system built with Spring Boot micro
 The repository is structured into three clean application modules:
 
 ```
-├── flightreservationapp/   # Spring Boot backend (Flight booking, user auth, search, PDF generation)
-├── flightcheckinapp/       # Spring Boot microservice (Check-in management)
-├── frontend/               # React + Vite + Redux frontend web application
-├── sql.txt                 # Database schema and initial flight seed data
-└── Readme.md               # Application setup and run guide
+├── flightReservation/              # Spring Boot backend (Flight booking, user auth, search, PDF generation)
+├── flightCheckIn/                  # Spring Boot microservice (Check-in management)
+├── flightTicketingSystem-frontend/ # React + Vite + Redux frontend web application
+└── Readme.md                       # Application setup and run guide
 ```
 
 ---
 
-## Prerequisites
+## Environment & Prerequisites
 
-- **Java**: OpenJDK 17 or later
-- **Maven**: 3.8+ (or use the included `./mvnw`)
+- **Java**: OpenJDK 17 (e.g. `17.0.21.1` or later)
+- **Maven**: Apache Maven 3.9+ (or use the included `./mvnw`)
 - **Node.js**: 18+ & **npm**
 - **MySQL**: 8.0+
 
@@ -35,51 +34,63 @@ The repository is structured into three clean application modules:
    CREATE DATABASE checkin_db;
    ```
 
-2. Run the SQL initialization script for `flightdb` (schema and flight records):
-   ```shell
-   mysql -u root -p flightdb < sql.txt
-   ```
+2. Tables and admin users (`admin` / `admin123`) are automatically initialized by Hibernate on application startup.
 
 ---
 
 ## Running the Applications
 
-### 1. Flight Reservation Backend (`flightreservationapp`)
+### 1. Flight Reservation Backend (`flightReservation`)
 
 Port: `8080`
 
 ```shell
-cd flightreservationapp
+cd flightReservation
 
-# Run using Maven wrapper
-./mvnw clean spring-boot:run
+# Build and package
+mvn clean package
+
+# Run with environment variables (or rely on defaults)
+export DATASOURCE_URL="jdbc:mysql://localhost:3306/flightdb?createDatabaseIfNotExist=true"
+export DATASOURCE_USER="root"
+export DATASOURCE_PASSWORD="password"
+
+java -jar target/flightreservationApplication-0.0.1-SNAPSHOT.jar
 ```
 
 *Note: Default administrator account created on startup: `admin` / `admin123`.*
 
 ---
 
-### 2. Flight Check-In Backend (`flightcheckinapp`)
+### 2. Flight Check-In Backend (`flightCheckIn`)
 
 Port: `8081`
 
 ```shell
-cd flightcheckinapp
+cd flightCheckIn
 
-# Run using Maven wrapper
-./mvnw clean spring-boot:run
+# Build and package
+mvn clean package
+
+# Run with environment variables (or rely on defaults)
+export DATASOURCE_URL="jdbc:mysql://localhost:3306/checkin_db?createDatabaseIfNotExist=true"
+export DATASOURCE_USER="root"
+export DATASOURCE_PASSWORD="password"
+export BOOKING_SERVICE_URL="http://localhost:8080/api/bookings"
+
+java -jar target/flightCkeckinApplication-0.0.1-SNAPSHOT.jar
 ```
 
 *Note: The check-in service connects to the booking service on port 8080 to validate reservations.*
 
 ---
 
-### 3. Frontend Application (`frontend`)
+### 3. Frontend Application (`flightTicketingSystem-frontend`)
 
 Port: `5173` (Vite dev server)
 
 ```shell
-cd frontend
+cd flightTicketingSystem-frontend
 
 # Install dependencies
 npm install
@@ -92,4 +103,4 @@ To build for production:
 ```shell
 npm run build
 ```
-The compiled static assets will be output to `frontend/dist/`.
+The compiled static assets will be output to `flightTicketingSystem-frontend/dist/`.
