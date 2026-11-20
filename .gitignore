@@ -15,3 +15,5 @@ Thumbs.db
 
 # Local environment files
 *.local
+
+flightReservation/src/main/resources/application.properties

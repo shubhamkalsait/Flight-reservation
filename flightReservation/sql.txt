@@ -8,12 +8,12 @@ CREATE TABLE User (
     email VARCHAR(255) NOT NULL,
     gender VARCHAR(10),
     contactNumber VARCHAR(15),
-    age INT,
+    age INT
 );
 
 CREATE TABLE User_Roles (
     user_id BIGINT NOT NULL,
-    roles VARCHAR(50),
+    role VARCHAR(50),
     PRIMARY KEY (user_id, role),
     FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
 );
