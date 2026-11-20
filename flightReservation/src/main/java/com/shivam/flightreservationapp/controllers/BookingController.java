@@ -52,7 +52,7 @@ public class BookingController {
 	
 	
 	@PostMapping("/book")
-	public ResponseEntity<?> bookFlight(@RequestParam Long flightId, Principal principal, String seatNumber) {
+	public ResponseEntity<?> bookFlight(@RequestParam("flightId") Long flightId, Principal principal, @RequestParam(value = "seatNumber", required = false) String seatNumber) {
 		User user = userRepository.findByUsername(principal.getName())
 				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 		Flight flight = flightRepository.findById(flightId).orElse(null);
@@ -64,23 +64,17 @@ public class BookingController {
 		booking.setSeatNumber(seatNumber);
 		booking = bookingRepository.save(booking);
 
-//		try {
-//			String pdfPath = ticketPdfGeneratorService.generateTicketPdf(user, flight, booking);
-//			return ResponseEntity.ok("Booking successful. Ticket saved at: " + pdfPath);
-//		} catch (Exception e) {
-//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to generate ticket PDF.");
-//		}
 		return ResponseEntity.ok("Booking successful! Your booking ID is: " + booking.getId());
 	}
 
 	@GetMapping("/user/{userId}")
-	public ResponseEntity<List<Booking>> getUserBookings(@PathVariable Long userId) {
+	public ResponseEntity<List<Booking>> getUserBookings(@PathVariable("userId") Long userId) {
 		List<Booking> bookings = bookingService.getUserBookings(userId);
 		return new ResponseEntity<>(bookings, HttpStatus.OK);
 	}
 	
 	@GetMapping("/details/{bookingId}")
-	public ResponseEntity<?> getBookingDetails(@PathVariable Long bookingId){
+	public ResponseEntity<?> getBookingDetails(@PathVariable("bookingId") Long bookingId){
 		Optional<Booking> booking = bookingService.getBookingDetails(bookingId);
 		return new ResponseEntity<>(booking, HttpStatus.OK); 
 	}

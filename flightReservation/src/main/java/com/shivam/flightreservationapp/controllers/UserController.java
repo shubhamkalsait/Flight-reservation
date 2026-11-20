@@ -51,7 +51,7 @@ public class UserController {
 //	    }
 	
 	@PostMapping("/register")
-	public ResponseEntity<String> registerUser(@Validated @RequestBody User user, @RequestParam boolean isAdmin, Authentication authentication) {
+	public ResponseEntity<String> registerUser(@Validated @RequestBody User user, @RequestParam(value = "isAdmin", defaultValue = "false") boolean isAdmin, Authentication authentication) {
 	    try {
 			if(isAdmin) {
 				if (authentication == null) {
@@ -85,7 +85,7 @@ public class UserController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<?> findUserById(@PathVariable Long id) {
+	public ResponseEntity<?> findUserById(@PathVariable("id") Long id) {
 		Optional<User> user = userService.findById(id);
 
 		if (user.isPresent()) {

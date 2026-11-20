@@ -36,15 +36,18 @@ public class SecurityConfig {
     
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
-            .authorizeRequests(auth -> auth
-            	.requestMatchers("/api/flights").hasRole("ADMIN")
-                    .requestMatchers("/api/bookings//**").hasAnyRole("USER","ADMIN")// new edit
-                .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")    
+        http.cors(org.springframework.security.config.Customizer.withDefaults())
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/users/register", "/api/users/login").permitAll()
+                .requestMatchers("/api/flights/create", "/api/flights/update/**", "/api/flights/delete/**").hasRole("ADMIN")
+                .requestMatchers("/api/flights/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/api/bookings/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/api/users/userList", "/api/users/delete/**").hasRole("ADMIN")
+                .requestMatchers("/api/users/**").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated()
             )
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 

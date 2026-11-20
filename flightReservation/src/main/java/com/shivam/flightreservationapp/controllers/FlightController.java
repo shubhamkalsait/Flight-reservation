@@ -39,20 +39,20 @@ public class FlightController {
 	}
 
 	@GetMapping("/search")
-	public ResponseEntity<List<Flight>> searchFlights(@RequestParam String origin, @RequestParam String destination,
-			@RequestParam String departureDate) {
+	public ResponseEntity<List<Flight>> searchFlights(@RequestParam("origin") String origin, @RequestParam("destination") String destination,
+			@RequestParam(value = "departureDate", required = false) String departureDate) {
 		List<Flight> flights = flightService.searchFlights(origin, destination, departureDate);
 		return new ResponseEntity<>(flights, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<String> deleteFlight(@PathVariable Long id) {
+	public ResponseEntity<String> deleteFlight(@PathVariable("id") Long id) {
 		flightService.deleteFlight(id);
 		return new ResponseEntity<>("Flight deleted successfully", HttpStatus.OK);
 	}
 
 	@PutMapping("/update/{id}")
-	public ResponseEntity<Flight> updateFlight(@PathVariable Long id, @RequestBody Flight flightDetails) {
+	public ResponseEntity<Flight> updateFlight(@PathVariable("id") Long id, @RequestBody Flight flightDetails) {
 		Flight updatedFlight = flightService.updateFlight(id, flightDetails);
 		return new ResponseEntity<>(updatedFlight, HttpStatus.OK);
 	}

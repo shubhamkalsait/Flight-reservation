@@ -21,7 +21,7 @@ public class CheckInController {
 	    private CheckInService checkInService;
 
 	    @PostMapping("/{bookingId}")
-	    public ResponseEntity<String> checkIn(@PathVariable Long bookingId, @RequestParam String numberOfBags,
+	    public ResponseEntity<String> checkIn(@PathVariable("bookingId") Long bookingId, @RequestParam("numberOfBags") String numberOfBags,
 	            @RequestHeader("Authorization") String authorizationHeader) {
 	    	 String jwtToken = authorizationHeader.replace("Bearer ", "");
 
