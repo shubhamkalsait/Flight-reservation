@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import api from '../api';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../Redux-config/UserSlice';
 import { toast, ToastContainer } from 'react-toastify';
@@ -9,6 +9,7 @@ function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+    const location = useLocation();
     const dispatch = useDispatch();
 
     const handleLogin = async (e) => {
@@ -23,6 +24,9 @@ function Login() {
             if (response.data.roles.includes("ROLE_ADMIN"))
                 { 
                     navigate("/admin-profile")  
+                }
+            else if (location.state?.search) {
+                    navigate("/search-flights", { state: location.state })
                 }
             else {
                     navigate("/profile")

@@ -1,125 +1,96 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { signOut } from "../Redux-config/UserSlice";
 import Logo from "../image/combined logo.png";
 
 export default function Header() {
   const { isLoggedIn, roles } = useSelector((store) => store.user);
   const dispatch = useDispatch();
+  const isAdmin = roles?.includes("ROLE_ADMIN");
 
-  let navLinks;
+  const tabs = isAdmin
+    ? [
+        { to: "/flight", icon: "bxs-plane-alt", label: "Flights" },
+        { to: "/admin", icon: "bxs-shield", label: "Admin" },
+      ]
+    : [
+        { to: isLoggedIn ? "/search-flights" : "/", icon: "bxs-plane-take-off", label: "Flight tickets" },
+        { to: "/check-in", icon: "bx-check-shield", label: "Web check-in" },
+      ];
 
+  let right;
   if (isLoggedIn) {
-    if (roles?.includes("ROLE_ADMIN")) {
-      // Logged in and Admin
-      navLinks = (
-        <ul>
-          <li>
-            <Link to={"/admin-profile"}>
-              Your Profile <i className="bx bxs-user-detail"></i>
-            </Link>
-          </li>
-          <li>
-            <Link to={"/Flight"}>Flights</Link>
-          </li>
-          <li>
-            <Link to={"/admin"}>Admin</Link>
-          </li>
-          <li>
-            <Link to={"/my-bookings"}>
-              Your Booking <i className="bx bx-receipt"></i>
-            </Link>
-          </li>
-          <li>
-            <Link onClick={() => dispatch(signOut())}>
-              Log Out <i className="bx bx-log-out"></i>
-            </Link>
-          </li>
-        </ul>
-      );
-    } else {
-      // Logged in and not Admin
-      navLinks = (
-        <ul>
-          <li>
-            <Link to={"/profile"}>
-              Your Profile <i className="bx bxs-user-detail"></i>
-            </Link>
-          </li>
-          <li>
-            <Link to={"/search-flights"}>
-              Search Flights <i className="bx bx-search"></i>
-            </Link>
-          </li>
-          <li>
-            <Link to={"/my-bookings"}>
-              Your Booking <i className="bx bx-receipt"></i>
-            </Link>
-          </li>
-          <li>
-            <Link onClick={() => dispatch(signOut())}>
-              Log Out <i className="bx bx-log-out"></i>
-            </Link>
-          </li>
-        </ul>
-      );
-    }
+    right = (
+      <>
+        <li>
+          <NavLink to="/my-bookings">
+            <i className="bx bx-receipt"></i>
+            <span>Bookings</span>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to={isAdmin ? "/admin-profile" : "/profile"}>
+            <i className="bx bx-user-circle"></i>
+            <span>Account</span>
+          </NavLink>
+        </li>
+        <li>
+          <Link to="/" onClick={() => dispatch(signOut())}>
+            <i className="bx bx-log-out"></i>
+            <span>Log out</span>
+          </Link>
+        </li>
+      </>
+    );
   } else {
-    // Not logged in
-    navLinks = (
-      <ul>
+    right = (
+      <>
         <li>
-          <Link to={"/"}>
-            Home <i className="bx bx-home-alt"></i>
-          </Link>
+          <NavLink to="/contact">
+            <i className="bx bx-help-circle"></i>
+            <span>Help</span>
+          </NavLink>
         </li>
         <li>
-          <Link to={"/login"}>
-            Login <i className="bx bx-log-in"></i>
-          </Link>
+          <NavLink to="/register">
+            <i className="bx bx-user-plus"></i>
+            <span>Sign up</span>
+          </NavLink>
         </li>
         <li>
-          <Link to={"/register"}>
-            Register <i className="bx bxs-contact"></i>
-          </Link>
+          <NavLink to="/login">
+            <i className="bx bx-user-circle"></i>
+            <span>Account</span>
+          </NavLink>
         </li>
-        <li>
-          <Link to={"/contact"}>
-            Contact <i className="bx bx-phone"></i>
-          </Link>
-        </li>
-      </ul>
+      </>
     );
   }
 
   return (
     <>
-      <header>
-        <div className="container">
-          <h1>
-            <img src={Logo} alt="" className="logo" /> Cloudblitz Flight
-            Reservation System
-          </h1>
-          <nav>
-            {/* {isLoggedIn ? (<ul>
-                        {
-                            roles?.includes("ROLE_ADMIN") && (
-                                <li><Link to={"/admin-profile"}>Admin<i className="bx bxs-cog"></i></Link></li>
-                            )
-                        }
-                        <li><Link to={"/profile"}>Your Profile <i className='bx bxs-user-detail'></i></Link></li>
-                        <li><Link to={"/search-flights"}>Search flights <i className='bx bx-search'></i></Link></li>
-                        <li><Link to={"/my-bookings"}>Your Booking <i className='bx bx-receipt'></i></Link></li>
-                        {/* <li><Link>Contact <i className='bx bx-phone'></i></Link></li> */}
-            {/* <li><Link onClick={() => dispatch(signOut())}>Log out <i className='bx bx-log-out'></i></Link></li>
-                    </ul>) : (<ul>
-                        <li><Link to={"/"}>Home <i className='bx bx-home-alt'></i></Link></li>
-                        <li><Link to={"/login"}>Login <i className='bx bx-log-in'></i></Link></li>
-                        <li><Link to={"/register"}>Register <i className='bx bxs-contact'></i></Link></li>
-                        <li><Link to={"/contact"}>Contact <i className='bx bx-phone'></i></Link></li>
-                    </ul>)} */}
-            {navLinks}
-          </nav>
+      <div className="promo-strip">
+        <i className="bx bxs-offer"></i> <strong>Get 10% Discount</strong> on
+        your first flight booking — use code <strong>FLYFIRST</strong>
+      </div>
+      <header className="rb-header">
+        <div className="inner">
+          <div className="rb-brand">
+            <Link to="/" className="rb-brand">
+              <img src={Logo} alt="Home" className="rb-logo" />
+            </Link>
+            <ul className="rb-tabs">
+              {tabs.map((t) => (
+                <li key={t.to}>
+                  <NavLink to={t.to} end>
+                    <i className={`bx ${t.icon}`}></i>
+                    {t.label}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <ul className="rb-nav">{right}</ul>
         </div>
       </header>
     </>
